@@ -1,0 +1,18 @@
+language: node_js
+os: windows
+node_js:
+- '13'
+script:
+- echo 'Starting'
+- npm install
+- echo 'Testing'
+- npm test
+deploy:
+  provider: heroku
+  api_key:
+    secure: Ah3LvrOiofSutgUJoaZXReP8Qx9JGuBp7P13zprK5DAeXK1BNrFsJlj4AhdBCPe6tedHtPkKXsmISG1k0EyVwAoH1N6XOtOFHwQuGjTHlMMUo+rZTrlYP1D1wF2lr673Ul/FAnYE+v635EhNhJW34r/FDfzAMlZBOoFy9wVUkVVUkrfmFEoDymuaU9AO8R/f3nPpV8nWGq3IAwmcmU2tBo0PzwalVlT4NmzXxBXaRQpM+WFb2tcRf6hisZqPCchC376VKy/A54EbKVHSG5tYaPValpPQBNKm+Q+3FtvdsIj3sta6ypmqyQEp6WimAhE0zFw+J3lEqTFBkHBxBNzBz8ie+4KHeKJJY3hkECf1pXALtGPz+s6wTkilrdCa3RMaSqMZqtqKNG9iJv7I7JTQOP4fZHUgcpHhQaxIo9xVzUcxCsCMtsgyKGUJ5KUzcwTSWYc1XyzKK6MyOP65kzPoorBmYycaamS1Nn8BYz3noiQ+wl1EGA1Oq7ypTRHWS/vS4zsMky9pnjAe7UyorzomFi8G8qQLayyi0Nl/BJnKM+zL79oWmEUy1eaZKX0lPy6FJNOPYFL0kXvsLtLdrtgvN+khizXHGS47mO1A9BWBIb60WLrZl+rDDYhokEmtintG8KLDPqxcW6wq99Cbm75AkfhWTt7v+e8ZHQYPbxd+Qss=
+  app: devops-project-ece
+  #skip_cleanup: true
+  on:
+    repo: AviYDev/Devops-Project-ECE
+    condition: '("$TARGET_OS" = win??) && "$QT5"'

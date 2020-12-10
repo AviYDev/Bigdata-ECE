@@ -1,0 +1,9 @@
+language: node_js
+os: windows
+node_js:
+- '13'
+script:
+- echo 'Starting'
+- npm install
+- echo 'Testing'
+- npm test
