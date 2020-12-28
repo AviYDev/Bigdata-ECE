@@ -3,9 +3,21 @@
 const express = require('express')
 userRouter = express.Router()
 const path = require('path');
+const AWS = require('aws-sdk');
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js')
 const config = require('../config.json')
 
+var userDetails = null;
+var cognitoUser;
+var authenticationDetails;
+var userInfo = null;
+
+AWS.config.update({
+  region:'us-east-2',
+  accessKeyId: 'AKIAJTKKKPPSHWGFFTGA',
+  secretAccessKey: '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'});
+
+const cognitoidentityserviceprovider =  new AWS.CognitoIdentityServiceProvider();
 
 const userPool = new AmazonCognitoIdentity.CognitoUserPool(  {
       UserPoolId: config.cognito.UserPoolId,
@@ -13,76 +25,127 @@ const userPool = new AmazonCognitoIdentity.CognitoUserPool(  {
     });
 
 
+
+userRouter.post('/getUser', (req,res) =>{
+  console.log('/getUser')
+  var params = {
+    AccessToken:  req.headers.access_token /* required */
+  };
+  console.log(params);
+  cognitoidentityserviceprovider.getUser(params, function(err, data) {
+    if (err) {console.log(err);
+       } // an error occurred
+    else {    console.log(data); res.send(JSON.parse(JSON.stringify(data)))}     // successful response
+  });
+})
 /*
-//const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
-userRouter.get('/signup', (req, res) => {
-});
+userRouter.post('/user', (req, res) => {
+if (this.userInfo != null) {
+  res.send(JSON.parse(JSON.stringify(this.userInfo.getIdToken())));
+}else{
+  this.cognitoUser.authenticateUser(authenticationDetails, {
+    onSuccess: function (result) {
+      this.userInfo = result;
+   //   console.log(this.userInfo);
+      console.log("UserInfo");
+      console.log("SUCCESS");
+      //res.send(token_object);
+      res.send(JSON.parse(JSON.stringify(this.userInfo.getIdToken())));
 
+    },
+    onFailure: (function (err) {
+      console.error("ERROR:")
+      console.error(err);
+    }),
+  })
+}
+})*/
 
+userRouter.post('/accessToken_gitlab', (req, res) => {
 
-userRouter.post('/login', (req, res) =>{
+  console.log('/accessToken_gitlab')
+  console.log(this.userDetails.Username);
+  //console.log(userPool);
 
-  const loginDetails = {
-    username: req.body.email,
-    password: req.body.password
+  const params = {
+    UserAttributes:[
+      {
+        Name: 'custom:access_token_gitlab',
+        Value: 'gSjb4csVx_6ZSFR6Kuda'
+      },
+    ],
+    Username: this.userDetails.Username,
+    UserPoolId: userPool.userPoolId,
   }
-  const authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails(loginDetails);
-  const userDetails = {
-    username : req.body.email,
-    pool : userPool
+  console.log(params)
+  //var cognitoidentityserviceprovider = new AmazonCognitoIdentity.CognitoIdentityServiceProvider({apiVersion: '2016-04-18'});
+
+  cognitoidentityserviceprovider.adminUpdateUserAttributes(params, (err,data) => {
+    if(err){
+      console.error("ERROR:")
+      console.error(err);
+    }
+    else {
+      console.log("Success");
+      console.log(data)
+      res.send("Token Gitlab Added");
+    }
+  })
+})
+
+
+
+
+userRouter.delete('/accessToken_gitlab', (req, res) => {
+
+  console.log('/accessToken_gitlab')
+  console.log(this.userDetails.Username);
+  //console.log(userPool);
+
+  const params = {
+    UserAttributeNames:['custom:access_token_gitlab'],
+    Username: this.userDetails.Username,
+    UserPoolId: userPool.userPoolId,
   }
+  console.log(params)
+  //var cognitoidentityserviceprovider = new AmazonCognitoIdentity.CognitoIdentityServiceProvider({apiVersion: '2016-04-18'});
 
-  const cognitoUser = new AmazonCognitoIdentity.CognitoUser(userDetails)
+  cognitoidentityserviceprovider.adminDeleteUserAttributes(params, (err,data) => {
+    if(err){
+      console.error("ERROR:")
+      console.error(err);
+    }
+    else {
+      console.log("Success");
+      console.log(data)
+      res.send("Token Gitlab Deleted");
+    }
+  })
+})
 
-  req.session['login-errors'] = [];
-  cognitoUser.authenticateUser(authenticationDetails, {
-        onSuccess : data =>  {
-          console.log('SUCCESS');
-          console.log(data);
-        },
-        onFailure : err => {
-          console.err(err);
-          req.session['login-errors'].push(err.messsage)
-         // res.redirect('/')
-        }
-      }
-  )
-});
 
-userRouter.post('/signup', (req, res) =>{
-  res.send(req.body);
-});
-
-*/
 userRouter.post('/login', (req, res) => {
   console.log("Connexion...")
-
   const loginDetails = {
     Username: req.body.email,
     Password: req.body.password
   }
-
-
-  //const authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails(loginDetails);
-  var authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails(loginDetails);
-
-
-  //var userPool2 = new AmazonCognitoIdentity.CognitoIdentityServiceProvider.CognitoUserPool(userPool)
-
-  const userDetails = {
+  authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails(loginDetails);
+   this.userDetails = {
     Username : req.body.email,
     Pool : userPool
   }
-
-  const cognitoUser = new AmazonCognitoIdentity.CognitoUser(userDetails)
-
-
-
-  cognitoUser.authenticateUser(authenticationDetails, {
+  this.cognitoUser = new AmazonCognitoIdentity.CognitoUser(this.userDetails)
+  this.cognitoUser.authenticateUser(authenticationDetails, {
     onSuccess: function (result) {
+      this.userInfo = result;
       var accesstoken = result.getAccessToken().getJwtToken();
-      console.log("SUCCESS : " + accesstoken);
-     // callback(null, accesstoken);
+      console.log("SUCCESS : " + JSON.stringify(result));
+      let token_object = {
+        'userInfo' : JSON.parse(JSON.stringify(result.getIdToken())),
+        'access_token': accesstoken
+      };
+      res.send(JSON.parse(JSON.stringify(this.userInfo)));
     },
     onFailure: (function (err) {
      // callback(err);
@@ -91,13 +154,13 @@ userRouter.post('/login', (req, res) => {
     }),
     newPasswordRequired: () => {
      // browserHistory.push('/new-password');
-      console.log(cognitoUser);
-      console.log(cognitoUser.getAuthenticationFlowType(), 'YOU NEED TO CHANGE PASSWORD');
+      console.log(this.cognitoUser);
+      console.log(this.cognitoUser.getAuthenticationFlowType(), 'YOU NEED TO CHANGE PASSWORD');
       const userData = {
-        Username: cognitoUser.username,
+        Username: this.cognitoUser.Username,
         Pool: userPool,
       };
-      cognitoUser.completeNewPasswordChallenge(
+      this.cognitoUser.completeNewPasswordChallenge(
           loginDetails.Password, //TODO : Change Password
           {},
           {
