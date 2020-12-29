@@ -1,8 +1,8 @@
 
 
 const express = require('express')
+const axios = require('axios')
 userRouter = express.Router()
-const path = require('path');
 const AWS = require('aws-sdk');
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js')
 const config = require('../config.json')
@@ -11,6 +11,11 @@ var userDetails = null;
 var cognitoUser;
 var authenticationDetails;
 var userInfo = null;
+
+
+
+
+
 
 AWS.config.update({
   region:'us-east-2',
@@ -62,16 +67,18 @@ if (this.userInfo != null) {
 })*/
 
 userRouter.post('/accessToken_gitlab', (req, res) => {
-
+console.log("TEESST")
   console.log('/accessToken_gitlab')
   console.log(this.userDetails.Username);
   //console.log(userPool);
+  //console.log(req.body)
 
   const params = {
     UserAttributes:[
       {
         Name: 'custom:access_token_gitlab',
-        Value: 'gSjb4csVx_6ZSFR6Kuda'
+        Value: req.body.gitlabKey
+        //gSjb4csVx_6ZSFR6Kuda
       },
     ],
     Username: this.userDetails.Username,
@@ -94,6 +101,40 @@ userRouter.post('/accessToken_gitlab', (req, res) => {
 })
 
 
+userRouter.post('/ece_repolist_gitlab', (req, res) => {
+
+  console.log('/ece_repolist_gitlab')
+  console.log(req.body.gitlabKey)
+  axios.get('https://gitlab.com/api/v4/groups/10506269/projects?access_token='+req.body.gitlabKey,{})
+      .then(result => {
+        console.log(`statusCode: ${result.status}`)
+        console.log(result.data)
+        res.send(JSON.stringify(result.data));
+      })
+      .catch(error => {
+        console.log("error");
+       console.error(error)
+        res.sendStatus(404);
+      })
+})
+
+userRouter.post('/all_repolist_gitlab', (req, res) => {
+
+  console.log('/all_repolist_gitlab')
+  console.log(req.body.gitlabKey)
+  axios.get('https://gitlab.com/api/v4/projects?simple=true&access_token='+req.body.gitlabKey,{})
+      .then(result => {
+        console.log(`statusCode: ${result.status}`)
+        console.log(result.data)
+        res.send(JSON.stringify(result.data));
+      })
+      .catch(error => {
+        console.log("error");
+        console.error(error)
+        res.sendStatus(404);
+
+      })
+})
 
 
 userRouter.delete('/accessToken_gitlab', (req, res) => {
