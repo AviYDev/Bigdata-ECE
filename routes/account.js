@@ -15,6 +15,8 @@ var userInfo = null;
 
 
 
+userRouter.use(cors());
+
 
 
 AWS.config.update({
