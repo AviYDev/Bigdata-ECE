@@ -6,10 +6,9 @@ const express = require('express')
 const bodyparser = require('body-parser')
 const usersRouter = require('./routes/account')
 const cors = require('cors')
-const path = require('path');
 const app = express()
 const port = process.env.PORT || 3001
-const rp = require('request-promise');
+
 
 app.use(cors());
 app.use(bodyparser.json())
