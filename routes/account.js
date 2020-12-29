@@ -3,6 +3,7 @@
 const express = require('express')
 const axios = require('axios')
 userRouter = express.Router()
+const cors = require('cors')
 const AWS = require('aws-sdk');
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js')
 const config = require('../config.json')
