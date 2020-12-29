@@ -21,7 +21,7 @@ app.use(bodyparser.urlencoded({
 //app.use(express.static(path.join(__dirname, '/public')));
 //app.get('/', (req, res) => res.sendfile('index.html'));
 
-//app.get('/', (req, res) => res.sendfile('./index.html'));
+app.get('/', (req, res) => res.sendfile('./index.html'));
 
 app.use('/', usersRouter)
 
