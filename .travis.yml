@@ -3,6 +3,5 @@ os: windows
 node_js:
 - '13'
 script:
-- echo 'Starting'
+- echo 'Starting app test'
 - npm install
-- echo 'Testing'
