@@ -9,14 +9,7 @@ const AmazonCognitoIdentity = require('amazon-cognito-identity-js')
 const config = require('../config.json')
 
 var authenticationDetails;
-
-
-
-
-
 userRouter.use(cors());
-
-
 
 AWS.config.update({
   region:'us-east-2',
@@ -41,7 +34,7 @@ userRouter.post('/getUser', (req,res) =>{
   console.log(params);
   cognitoidentityserviceprovider.getUser(params, function(err, data) {
     if (err) {console.log(err);
-       } // an error occurred
+       }
     else {    console.log(data); res.send(JSON.parse(JSON.stringify(data)))}     // successful response
   });
 })
@@ -61,7 +54,6 @@ userRouter.post('/accessToken_gitlab', (req, res) => {
     Username: this.userDetails.Username,
     UserPoolId: userPool.userPoolId,
   }
-  console.log(params)
 
 
   cognitoidentityserviceprovider.adminUpdateUserAttributes(params, (err,data) => {
@@ -81,7 +73,6 @@ userRouter.post('/accessToken_gitlab', (req, res) => {
 userRouter.post('/ece_repolist_gitlab', (req, res) => {
 
   console.log('/ece_repolist_gitlab')
-  console.log(req.body.gitlabKey)
   axios.get('https://gitlab.com/api/v4/groups/10506269/projects?access_token='+req.body.gitlabKey,{})
       .then(result => {
         console.log(`statusCode: ${result.status}`)
@@ -98,7 +89,6 @@ userRouter.post('/ece_repolist_gitlab', (req, res) => {
 userRouter.post('/all_repolist_gitlab', (req, res) => {
 
   console.log('/all_repolist_gitlab')
-  console.log(req.body.gitlabKey)
   axios.get('https://gitlab.com/api/v4/projects?simple=true&access_token='+req.body.gitlabKey,{})
       .then(result => {
         console.log(`statusCode: ${result.status}`)
@@ -117,16 +107,12 @@ userRouter.post('/all_repolist_gitlab', (req, res) => {
 userRouter.delete('/accessToken_gitlab', (req, res) => {
 
   console.log('/accessToken_gitlab')
-  console.log(this.userDetails.Username);
-  //console.log(userPool);
-
   const params = {
     UserAttributeNames:['custom:access_token_gitlab'],
     Username: this.userDetails.Username,
     UserPoolId: userPool.userPoolId,
   }
-  console.log(params)
-  //var cognitoidentityserviceprovider = new AmazonCognitoIdentity.CognitoIdentityServiceProvider({apiVersion: '2016-04-18'});
+
 
   cognitoidentityserviceprovider.adminDeleteUserAttributes(params, (err,data) => {
     if(err){
@@ -135,7 +121,6 @@ userRouter.delete('/accessToken_gitlab', (req, res) => {
     }
     else {
       console.log("Success");
-      console.log(data)
       res.send("Token Gitlab Deleted");
     }
   })
@@ -144,7 +129,6 @@ userRouter.delete('/accessToken_gitlab', (req, res) => {
 
 userRouter.post('/renewPassword', (req, res) => {
 
-console.log(req.body);
   this.cognitoUser.completeNewPasswordChallenge(
       req.body.password, //TODO : Change Password
       {},
@@ -184,15 +168,15 @@ userRouter.post('/login', (req, res) => {
   this.cognitoUser.authenticateUser(authenticationDetails, {
     onSuccess: function (result) {
       this.userInfo = result;
-      var accesstoken = result.getAccessToken().getJwtToken();
-      console.log("SUCCESS : " + JSON.stringify(result));
+
+      console.log("Successfully");
 
       res.send(JSON.parse(JSON.stringify(this.userInfo)));
     },
     onFailure: (function (err) {
-     // callback(err);
       console.error("ERROR:")
       console.error(err);
+      res.status(400).send(err);
     }),
     newPasswordRequired: () => {
      console.log("WILL BE RESET");
