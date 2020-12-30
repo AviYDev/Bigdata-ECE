@@ -70,7 +70,6 @@ if (this.userInfo != null) {
 })*/
 
 userRouter.post('/accessToken_gitlab', (req, res) => {
-console.log("TEESST")
   console.log('/accessToken_gitlab')
   console.log(this.userDetails.Username);
   //console.log(userPool);
@@ -168,6 +167,68 @@ userRouter.delete('/accessToken_gitlab', (req, res) => {
 })
 
 
+userRouter.post('/renewPassword', (req, res) => {
+
+console.log(req.body);
+  this.cognitoUser.completeNewPasswordChallenge(
+      req.body.password, //TODO : Change Password
+      {},
+      {
+        onSuccess: (user) => {
+          console.log('success', user);
+          res.send({value : "reseted"})
+        },
+        onFailure: (error) => {
+          console.log(error);
+          return res.status(400).json({
+            status: 'error',
+            message: error.message,
+          })
+        },
+      },
+  );
+  /*
+console.log('/renew')
+  const loginDetails = {
+    Username: req.body.email,
+    Password: req.body.password
+  }
+  this.userDetails = {
+    Username : req.body.email,
+    Pool : userPool
+  }
+  console.log(req.body);
+  this.cognitoUser = new AmazonCognitoIdentity.CognitoUser(this.userDetails)
+  authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails(loginDetails);
+  this.userDetails = {
+    Username : req.body.email,
+    Pool : userPool
+  }
+  this.cognitoUser = new AmazonCognitoIdentity.CognitoUser(this.userDetails)
+  this.cognitoUser.authenticateUser(authenticationDetails, {
+    newPasswordRequired: () => {
+      this.cognitoUser.completeNewPasswordChallenge(
+          req.body.password, //TODO : Change Password
+          {},
+          {
+            onSuccess: (user) => {
+              console.log('success', user);
+              res.send({value:"password reset"});
+            },
+            onFailure: (error) => {
+              console.log("FAIL RENEW")
+              console.log(error);
+            },
+          },
+      );
+    }
+  });*/
+});
+
+
+
+
+
 userRouter.post('/login', (req, res) => {
   console.log("Connexion...")
   const loginDetails = {
@@ -185,10 +246,7 @@ userRouter.post('/login', (req, res) => {
       this.userInfo = result;
       var accesstoken = result.getAccessToken().getJwtToken();
       console.log("SUCCESS : " + JSON.stringify(result));
-      let token_object = {
-        'userInfo' : JSON.parse(JSON.stringify(result.getIdToken())),
-        'access_token': accesstoken
-      };
+
       res.send(JSON.parse(JSON.stringify(this.userInfo)));
     },
     onFailure: (function (err) {
@@ -197,25 +255,8 @@ userRouter.post('/login', (req, res) => {
       console.error(err);
     }),
     newPasswordRequired: () => {
-     // browserHistory.push('/new-password');
-      console.log(this.cognitoUser);
-      console.log(this.cognitoUser.getAuthenticationFlowType(), 'YOU NEED TO CHANGE PASSWORD');
-      const userData = {
-        Username: this.cognitoUser.Username,
-        Pool: userPool,
-      };
-      this.cognitoUser.completeNewPasswordChallenge(
-          loginDetails.Password, //TODO : Change Password
-          {},
-          {
-            onSuccess: (user) => {
-              console.log('success', user);
-            },
-            onFailure: (error) => {
-              console.log(error);
-            },
-          },
-      );
+     console.log("WILL BE RESET");
+      res.send({value:"renew"});
     }
   })
 });
