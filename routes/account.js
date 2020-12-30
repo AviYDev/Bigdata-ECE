@@ -8,10 +8,8 @@ const AWS = require('aws-sdk');
 const AmazonCognitoIdentity = require('amazon-cognito-identity-js')
 const config = require('../config.json')
 
-var userDetails = null;
-var cognitoUser;
 var authenticationDetails;
-var userInfo = null;
+
 
 
 
@@ -22,8 +20,9 @@ userRouter.use(cors());
 
 AWS.config.update({
   region:'us-east-2',
-  accessKeyId: 'AKIAJTKKKPPSHWGFFTGA',
-  secretAccessKey: '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'});
+  accessKeyId: process.env.AWS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_KEY}); //TODO: USE IT EXTERNALY
+
 
 const cognitoidentityserviceprovider =  new AWS.CognitoIdentityServiceProvider();
 
@@ -46,48 +45,24 @@ userRouter.post('/getUser', (req,res) =>{
     else {    console.log(data); res.send(JSON.parse(JSON.stringify(data)))}     // successful response
   });
 })
-/*
-userRouter.post('/user', (req, res) => {
-if (this.userInfo != null) {
-  res.send(JSON.parse(JSON.stringify(this.userInfo.getIdToken())));
-}else{
-  this.cognitoUser.authenticateUser(authenticationDetails, {
-    onSuccess: function (result) {
-      this.userInfo = result;
-   //   console.log(this.userInfo);
-      console.log("UserInfo");
-      console.log("SUCCESS");
-      //res.send(token_object);
-      res.send(JSON.parse(JSON.stringify(this.userInfo.getIdToken())));
-
-    },
-    onFailure: (function (err) {
-      console.error("ERROR:")
-      console.error(err);
-    }),
-  })
-}
-})*/
 
 userRouter.post('/accessToken_gitlab', (req, res) => {
   console.log('/accessToken_gitlab')
   console.log(this.userDetails.Username);
-  //console.log(userPool);
-  //console.log(req.body)
+
 
   const params = {
     UserAttributes:[
       {
         Name: 'custom:access_token_gitlab',
         Value: req.body.gitlabKey
-        //gSjb4csVx_6ZSFR6Kuda
       },
     ],
     Username: this.userDetails.Username,
     UserPoolId: userPool.userPoolId,
   }
   console.log(params)
-  //var cognitoidentityserviceprovider = new AmazonCognitoIdentity.CognitoIdentityServiceProvider({apiVersion: '2016-04-18'});
+
 
   cognitoidentityserviceprovider.adminUpdateUserAttributes(params, (err,data) => {
     if(err){
@@ -110,7 +85,7 @@ userRouter.post('/ece_repolist_gitlab', (req, res) => {
   axios.get('https://gitlab.com/api/v4/groups/10506269/projects?access_token='+req.body.gitlabKey,{})
       .then(result => {
         console.log(`statusCode: ${result.status}`)
-        console.log(result.data)
+        //console.log(result.data)
         res.send(JSON.stringify(result.data));
       })
       .catch(error => {
@@ -127,7 +102,7 @@ userRouter.post('/all_repolist_gitlab', (req, res) => {
   axios.get('https://gitlab.com/api/v4/projects?simple=true&access_token='+req.body.gitlabKey,{})
       .then(result => {
         console.log(`statusCode: ${result.status}`)
-        console.log(result.data)
+        //console.log(result.data)
         res.send(JSON.stringify(result.data));
       })
       .catch(error => {
@@ -187,42 +162,7 @@ console.log(req.body);
         },
       },
   );
-  /*
-console.log('/renew')
-  const loginDetails = {
-    Username: req.body.email,
-    Password: req.body.password
-  }
-  this.userDetails = {
-    Username : req.body.email,
-    Pool : userPool
-  }
-  console.log(req.body);
-  this.cognitoUser = new AmazonCognitoIdentity.CognitoUser(this.userDetails)
-  authenticationDetails = new AmazonCognitoIdentity.AuthenticationDetails(loginDetails);
-  this.userDetails = {
-    Username : req.body.email,
-    Pool : userPool
-  }
-  this.cognitoUser = new AmazonCognitoIdentity.CognitoUser(this.userDetails)
-  this.cognitoUser.authenticateUser(authenticationDetails, {
-    newPasswordRequired: () => {
-      this.cognitoUser.completeNewPasswordChallenge(
-          req.body.password, //TODO : Change Password
-          {},
-          {
-            onSuccess: (user) => {
-              console.log('success', user);
-              res.send({value:"password reset"});
-            },
-            onFailure: (error) => {
-              console.log("FAIL RENEW")
-              console.log(error);
-            },
-          },
-      );
-    }
-  });*/
+
 });
 
 
