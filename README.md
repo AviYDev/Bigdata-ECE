@@ -1,2 +1,4 @@
 # ProjectManager-ECE
-ECE's project in Bigdata module
+Projet ING5 APP par Joris Dufresne & Avinash Yoganandan
+
+

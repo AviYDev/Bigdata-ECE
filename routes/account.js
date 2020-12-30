@@ -14,7 +14,8 @@ userRouter.use(cors());
 AWS.config.update({
   region:'us-east-2',
   accessKeyId: process.env.AWS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_KEY}); //TODO: USE IT EXTERNALY
+  secretAccessKey: process.env.AWS_SECRET_KEY}
+  );
 
 
 const cognitoidentityserviceprovider =  new AWS.CognitoIdentityServiceProvider();
