@@ -1,13 +1,17 @@
 # ProjectManager-ECE
 
-<img style="width:20%" src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/GitLab_logo.svg/1024px-GitLab_logo.svg.png">
-<img style="width:10%" src="https://img.icons8.com/color/452/amazon-web-services.png">
-<img style="width:20%" src="https://snapforum.s3.dualstack.us-east-1.amazonaws.com/original/2X/2/28b210ec069326d1914b54186854e278b874e08e.png">
-<img style="width:10%" src="https://assets.stickpng.com/thumbs/58480873cef1014c0b5e48ea.png">
+<img width="20%" src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/GitLab_logo.svg/1024px-GitLab_logo.svg.png">
+<img width="10%" src="https://img.icons8.com/color/452/amazon-web-services.png">
+<img width="20%" src="https://snapforum.s3.dualstack.us-east-1.amazonaws.com/original/2X/2/28b210ec069326d1914b54186854e278b874e08e.png">
+<img width="10%" src="https://atomrace.com/blog/wp-content/uploads/2016/02/heroku-logo-trans.png">
+
+
 
 Projet ING5 APP
-###Joris Dufresne & Avinash Yoganandan
-##https://ece-projectmanager.herokuapp.com/
+### Joris Dufresne & Avinash Yoganandan
+## https://ece-projectmanager.herokuapp.com/
+
+L'appli sur heroku peut mettre un moment avant de s'afficher. C'est une version gratuit d'Heroku
 
 ## En Bref
 Connexion à une interface liée à une org sur AWS permettant de lister les projets selon le groupe d'un utilisateur.
@@ -50,7 +54,7 @@ npm install
 npm start
 ````
 Application NodeJS
-######Port 3001
+###### Port 3001
 
 
 Front :
@@ -61,7 +65,7 @@ npm install
 npm start
 ````
 Application ReactJS
-######Port 3000
+###### Port 3000
 
 
 Afin de tester :
@@ -76,13 +80,13 @@ Password: ECE_bigdata_2020
 Majuscule / Minuscule / Chiffre / CaractèreSpeciaux lorsque l'on reset le password    
 
 ````
-###Aperçu
+### Aperçu
 <img src="https://i.imgur.com/lJrQzXe.png">
 <img src="https://i.imgur.com/ZyjTK69.png">
 <img src="https://i.imgur.com/lrhguim.png">
 
 
-#####Clé gitlab pour l'accès à l'Org ECE : gSjb4csVx_6ZSFR6Kuda
+##### Clé gitlab pour l'accès à l'Org ECE : gSjb4csVx_6ZSFR6Kuda
 
 
 ## Notes & Best practices
